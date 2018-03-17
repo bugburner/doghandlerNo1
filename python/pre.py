@@ -1,7 +1,7 @@
 print "Content-type: text/html"
 print """
 <html>
-<head><title>Zeiterfassung</title></head>
+<head><title>Hammerhigh</title></head>
 <link href="css/design.css" rel="stylesheet" type="text/css" />
 <link href="css/page.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
@@ -31,18 +31,23 @@ print """
                 </div>               
 <div class="rootMenuContainer" id="rdmenu">
                 <div class="menuItem">
-                <a      onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action=insert_dog">Insert new dog</a>
+                <a      onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action=dogs">Hunde</a>
                 </div>
                 </div>
 <div class="rootMenuContainer" id="rdmenu">
                 <div class="menuItem">
-                <a      onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action=Food">Food</a>
+                <a      onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action=persons">Personen</a>
+                </div>
+                </div>
+<div class="rootMenuContainer" id="rdmenu">
+                <div class="menuItem">
+                <a      onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action=tracks">Strecken</a>
                 </div>
                 </div>
 
 </div>
 
-<div id="mitte_oben"><p align="center" style="font-size:20pt;">pmd[time-recording]<br></div>
+<div id="mitte_oben"><p align="center" style="font-size:20pt;">hammerhigh[doghandlerNo1]<br></div>
 
 
 """
