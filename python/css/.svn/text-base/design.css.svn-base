@@ -1,0 +1,42 @@
+ div {  
+        background-color:white; border:2px; border-color:black;;
+        font:12px "Trebuchet MS", Verdana, Arial, sans-serif;
+        font-size: 10pt;
+        color:black;
+        font-weight:bold;
+        padding: 2px 2px 2px 2px;
+}
+
+ div#links {
+  background-color:#FFFFFF;
+  position:absolute;
+  top:15%;
+  width:12.6%;  height:74%;
+  color:black;
+
+ }
+
+  div#mitte_oben {
+  background-color:#FFFFFF;
+  position:absolute;
+  width:98.2%; height:20%;
+
+ }
+
+  div#mitte_unten {
+  background-color:#FFFFFF;
+  position:absolute;
+  top:15%; left:15%;
+  width:84%; height:74%;
+  overflow:auto;
+  padding: 2px 12px 2px 2px;
+  
+ }
+
+
+
+ td {
+ color:#000000;
+ font-weight:bold;
+ font-size:10pt;
+ }

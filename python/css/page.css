@@ -1,0 +1,128 @@
+/* CSS Document */
+@import url(menu.css);
+@import url(headline.css);
+@import url(formular.css);
+
+
+/* GLOBAL HTML TAGS */
+/*-------------------------------------------------------------------------------------------------*/
+/*html {
+	height:101%; /* somit wird die Scrollleiste auf der rechten Seite im FF immer angezeigt
+					Das Problem, das dabei auftritt, ist, dass bei vertikaler Wiedervergr��erung
+					eine horizontale Scrollleite auftaucht.
+				 */
+}*/
+
+body {
+	background-color:#FFFFFF;
+	font-family:Arial,Tahoma,Geneva,Helvetica,sans-serif;
+	color:#003366;
+	height:100%;
+	margin:0px; border:0px; padding:0px 5px 0px 0px;
+
+}
+
+/* overlib */
+div#overDiv { 
+	position:absolute;
+	visibility:hidden;
+	z-index:1000;
+}
+
+a {cursor:pointer;}
+
+/* ---> headline and content */
+div.inhaltsbox, div.inhaltsbox_ohne_bilderleiste, div.suchbox {
+	background-color:#FFFFFF;
+	padding:7px 7px 7px 7px;
+	border:1px solid #003366;
+	margin-bottom:10px;
+        margin-left:10px;
+	border-radius:8px;
+	border-radius:8px;
+
+}
+
+div.inhaltsbox {
+
+	background-position:right top;
+	background-repeat:repeat-y;
+	padding-right:110px;
+        background-color:#adadad;
+	border-radius:8px;
+	border-radius:8px;
+}
+
+div.suchbox {
+	background-position:right top;
+	background-repeat:repeat-y;
+	padding-right:110px;
+	border-radius:8px;
+	border-radius:8px;
+}
+
+div.startinfo, div.scriptmessages {
+	margin:5px 0px 10px 0px;
+	padding:2px 2px 2px 4px;
+	color:#FF0000;
+	background-color:#E0DEC5;
+	border:1px solid #003366;
+	border-top-width:5px;
+	
+}
+
+div.scriptmessages {
+	font-weight:bold;
+}
+
+/* --> table definitions */
+td {
+	vertical-align:center;
+	padding-top:3px;
+	padding-left:3px;
+	padding-right:50px;
+	padding-bottom:3px;
+	font:0.75em/100% Courier;
+	border-bottom:1px solid 000A79;
+}
+
+th {
+	border-bottom:2px solid #000A79;
+	padding-top:8px;
+	padding-left:3px;
+	padding-right:50px;
+	padding-bottom:8px;
+	text-align:left;
+}
+
+table.full_border, table.full_border td, table.full_border th {
+	border-style:solid;
+	border-width:1px;
+	border-color:#003366;
+}
+
+table.full_border {
+	background-color:#E0DEC5;
+	border-collapse:collapse;
+}
+
+table.full_border td {
+	padding-right:5px;
+}
+
+table.full_border tr:hover td{
+	background-color:#000000;
+}
+
+table.full_border th {
+	border-bottom-width:2px;
+	font-weight:bold;
+}
+
+.greenline{
+	background-color:lightgreen;
+}
+
+.redline{
+	background-color:red;
+}

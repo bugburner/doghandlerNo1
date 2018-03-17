@@ -1,0 +1,71 @@
+h1, h2 {
+	color:black;
+	font-weight:normal;
+        font-size:15pt;
+	background-color:#ededed;
+
+	padding:2px 2px 2px 4px;
+	border-style:solid;
+	border-color:#0066ee;
+	border-width:4px 1px 1px 1px;
+
+}
+
+h1{
+	font-size:125%;
+	margin:5px 0px 10px 10px;
+}
+
+/* for submenu links in H1 */
+h1 a{
+	color:#0ccff;
+	text-decoration:none;
+}
+
+/* seperates submenu links in H1 */
+h1 span.sep{
+	color:#9c9c9c;
+}
+
+h2 {
+	font-size:100%;
+	margin:15px 0px 5px 0px;
+}
+
+h3{
+	font-size:100%;
+	margin:7px 0px 0px 0px;
+	padding-bottom:3px;
+	clear:both;
+	border-bottom: 1px solid #9c9c9c;
+}
+
+/* h3 where the text is a link */
+a.h3Link{
+	cursor:pointer;
+	text-decoration:none;
+	color:#00ccee;
+}
+
+/* infotext of action on click behind the headline */
+span.hInfo{
+	font-size:75%;
+	opacity:0.7;
+	font-weight:normal;
+}
+
+/* toggle headline mouse */
+span.hToggle{
+	cursor:pointer;
+
+}
+
+
+/* === divs below the headlines */
+
+/* div below toggled h3 */
+div.h3ToggleDiv{
+	background-color:#00ccee;
+	margin-bottom:10px;
+	padding:5px;
+}
