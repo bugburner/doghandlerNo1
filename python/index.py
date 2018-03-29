@@ -44,13 +44,15 @@ if action == 'runs':
     for row in res:
         runs_order.append(row[0])
 
-    cur.execute("SELECT run_id, run.date, human.name, dog.name, track.name, track.distance, track.alt_diff, run.run_type, run_dogs.position, run.class, run.time, run.gpx_file FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN dog ON dog_id = dog.id INNER JOIN track ON run.track_id = track.id INNER JOIN human ON run.human_id = human.id ORDER BY date;")
+    cur.execute("SELECT run_id, run.date, human.name, dog.name, track.name, track.distance, track.alt_diff, run.run_type, run_dogs.position, run.class, run.time, run.gpx_file FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN dog ON dog_id = dog.id INNER JOIN track ON run.track_id = track.id INNER JOIN human ON run.human_id = human.id ORDER BY date DESC;")
     res = cur.fetchall()
 
+    runs_ord = list()
     runs = dict()
 
     for row in res:
         if not row[0] in runs:
+            runs_ord.append(row[0])
             runs[row[0]] = dict()
             runs[row[0]]["track"] = dict()
             runs[row[0]]["dog"] = dict()
@@ -70,7 +72,7 @@ if action == 'runs':
         
     print "<table><tr><th>Datum</th><th>Musher</th><th>Klasse</th><th>Hund/e</th><th>Strecke</th><th>Art des Laufs</th></tr>"
 
-    for r in runs:
+    for r in runs_ord:
         print "<a href=''><tr><td>%s</td><td>%s</td><td>%s</td><td><table>"%(runs[r]["date"],runs[r]["human"],runs[r]["class"])
         for d in runs[r]["dog"]:
             print "<tr><td>%s</td><td>%s</td></tr>"%(d,runs[r]["dog"][d])
