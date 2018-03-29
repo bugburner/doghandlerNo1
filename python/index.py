@@ -10,6 +10,8 @@ import pre
 from mysqlopts import give_mysql_opts
 from run_props import get_av_speed
 
+from parsegpx import parse_gpx
+
 mysql_opts = give_mysql_opts()
 mysql = MySQLdb.connect(mysql_opts['host'], mysql_opts['user'], mysql_opts['pass'], mysql_opts['db'])
 cur = mysql.cursor()
@@ -42,7 +44,7 @@ if action == 'runs':
     for row in res:
         runs_order.append(row[0])
 
-    cur.execute("SELECT run_id, run.date, human.name, dog.name, track.name, track.distance, track.alt_diff, run.run_type, run_dogs.position, run.class, run.time FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN dog ON dog_id = dog.id INNER JOIN track ON run.track_id = track.id INNER JOIN human ON run.human_id = human.id ORDER BY date;")
+    cur.execute("SELECT run_id, run.date, human.name, dog.name, track.name, track.distance, track.alt_diff, run.run_type, run_dogs.position, run.class, run.time, run.gpx_file FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN dog ON dog_id = dog.id INNER JOIN track ON run.track_id = track.id INNER JOIN human ON run.human_id = human.id ORDER BY date;")
     res = cur.fetchall()
 
     runs = dict()
@@ -62,16 +64,23 @@ if action == 'runs':
         runs[row[0]]["dog"][row[8]] = row[3]
         runs[row[0]]["class"] = row[9]
         runs[row[0]]["time"] = row[10]
+        runs[row[0]]["gpx"] = row[11]
         
         
-    print "<table><tr><th>Datum</th><th>Musher</th><th>Klasse</th><th>Hund/e</th><th>Strecke</th><th>Distanz [km]</th><th>H&ouml;henmeter [m]</th><th>Zeit [hh:mm:ss]</th><th>Geschwindigkeit [km/h]</th><th>Art des Laufs</th></tr>"
+        
+    print "<table><tr><th>Datum</th><th>Musher</th><th>Klasse</th><th>Hund/e</th><th>Strecke</th><th>Art des Laufs</th></tr>"
 
     for r in runs:
-        print "<tr><td>%s</td><td>%s</td><td>%s</td><td><table>"%(runs[r]["date"],runs[r]["human"],runs[r]["class"])
+        print "<a href=''><tr><td>%s</td><td>%s</td><td>%s</td><td><table>"%(runs[r]["date"],runs[r]["human"],runs[r]["class"])
         for d in runs[r]["dog"]:
             print "<tr><td>%s</td><td>%s</td></tr>"%(d,runs[r]["dog"][d])
-        print "</table></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"%(runs[r]["track"]["name"],runs[r]["track"]["distance"],runs[r]["track"]["alt_diff"], runs[r]["time"], get_av_speed(runs[r]["track"]["distance"],runs[r]["time"]), runs[r]["type"])
-            
+        print "</table></td><td>%s</td><td>%s</td></tr></a>"%(runs[r]["track"]["name"], runs[r]["type"])
+        svg = str()
+        distance = 0.0
+        if not runs[r]["gpx"] == None:
+            distance,svg = parse_gpx(runs[r]["gpx"])
+            print svg
+            print "Distance: %s"%(str(float(distance)/1e3))
     print "</table>"
         
 
