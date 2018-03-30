@@ -26,7 +26,7 @@ print """
 
 <div class="rootMenuContainer" id="rdmenu">
                 <div class="menuItem">
-                <a onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action=Overview"  >Startpage</a>
+                <a onmouseover="switchMenu(this.parentNode,true)" onmouseout="switchMenu(this.parentNode,false)" href="index.py?action="  >Startpage</a>
                 </div>
                 </div>               
 <div class="rootMenuContainer" id="rdmenu">

@@ -7,6 +7,15 @@ function ToggleBox (obj){
 	} 
 }
 
+function ToggleBoxDet (obj){ 
+	theObject = document.getElementById(obj); 
+	if (theObject.style.display == "block"){ 
+		theObject.style.display = "none"; 
+	}else{ 
+		theObject.style.display = "block"; 
+	} 
+}
+
 function sf(obj){
 	document.getElementById(obj).focus();
 }

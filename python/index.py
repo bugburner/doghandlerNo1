@@ -35,7 +35,10 @@ if action == 'runs':
 """
 
     s = Template(html).safe_substitute(headline = headline)
+
     print s
+
+    print "<h2>Neuen Lauf eintragen</h2>"
 
     runs_order = list()
 
@@ -69,33 +72,60 @@ if action == 'runs':
         runs[row[0]]["gpx"] = row[11]
         
         
-        
+    print "<h2>&Uuml;bersicht L&auml;ufe</h2>"
+    # CREATE RUN-DETAIL BOXES HIDED BY DEFAULT
+    for r in runs_ord:
+        print "<div id='div_%s' style='display:none;'> "%(r)
+        svg = str()
+        distance = 0.0
+        print "<span class='hToggle' onclick='ToggleBox(\"div_%s\")'><h2>Details <small>%s</small></h2></span>"%(r,runs[r]["date"])
+        print "<table>"
+        print "<tr><td>Musher</td><td>%s</td></tr>"%(runs[r]["human"])
+        print "<tr><td>Strecke</td><td>%s</td></tr>"%(runs[r]["track"]["name"])
+        print "<tr><td>Streckenl&auml;nge [km]</td><td>%s</td></tr>"%(runs[r]["track"]["distance"])
+        print "<tr><td>H&ouml;henmeter [m]</td><td>%s</td></tr>"%(runs[r]["track"]["alt_diff"])
+        print "<tr><td>Zeit [hh:mm:ss]</td><td>%s</td></tr>"%(runs[r]["time"])
+
+        print "<tr><td>Durchschnittsgeschwindigkeit [km/h]</td><td>%s</td></tr>"%(get_av_speed(runs[r]["track"]["distance"],runs[r]["time"])  )
+        print "<tr><td>Klasse</td><td>%s</td></tr>"%(runs[r]["class"])
+        print "<tr><td>Art des Laufs</td><td>%s</td></tr>"%(runs[r]["type"])
+
+        print "</table>"
+        if not runs[r]["gpx"] == None:
+            distance,svg,map3d, map2d = parse_gpx(runs[r]["gpx"])
+            print "H&oumlhendiagramm<br>"
+            print svg
+            print "<br>"
+            print "3d-Karte<br>"
+            print map3d
+            print "<br>"
+            print "2d-Karte<br>"
+            print map2d
+        print "</div>"
+
+    # PRINT TABLE WITH RUNS
     print "<table><tr><th>Datum</th><th>Musher</th><th>Klasse</th><th>Hund/e</th><th>Strecke</th><th>Art des Laufs</th></tr>"
 
     for r in runs_ord:
-        print "<a href=''><tr><td>%s</td><td>%s</td><td>%s</td><td><table>"%(runs[r]["date"],runs[r]["human"],runs[r]["class"])
+        print "<tr><td> <span class='hToggle' onclick='ToggleBox(\"div_%s\")'>%s</td><td>%s</td><td>%s</td><td><table>"%(r,runs[r]["date"],runs[r]["human"],runs[r]["class"])
         for d in runs[r]["dog"]:
-            print "<tr><td>%s</td><td>%s</td></tr>"%(d,runs[r]["dog"][d])
-        print "</table></td><td>%s</td><td>%s</td></tr></a>"%(runs[r]["track"]["name"], runs[r]["type"])
-        svg = str()
-        distance = 0.0
-        if not runs[r]["gpx"] == None:
-            distance,svg = parse_gpx(runs[r]["gpx"])
-            print svg
-            print "Distance: %s"%(str(float(distance)/1e3))
-    print "</table>"
-        
+            print "<tr><td style='width:60px;' align='left'>%s</td><td style='width:100px;' align='left'>%s</td></tr>"%(runs[r]["dog"][d],d)
+        print "</table></td><td>%s</td><td>%s</span></td></tr>"%(runs[r]["track"]["name"], runs[r]["type"])
+            
 
-    
+
+    print "</table>"
+
+        
 if action == 'dogs':
     headline = 'Hunde'
 
-    cur.execute("SELECT dog.name, dog.birth_date, dog.father, dog.mother, human.name, dog.grower, dog.growers_name FROM dog INNER JOIN human ON owner_id = human.id;")
+    cur.execute("SELECT dog.name, dog.birth_date, dog.father, dog.mother, human.name, dog.grower, dog.growers_name, dog.id FROM dog INNER JOIN human ON owner_id = human.id;")
     dogs = cur.fetchall()
 
 
-    print dogs
-    # CREATE BOX FOR CONTEN                                                                                                                                   
+#    print dogs
+    # CREATE BOX FOR CONTENT
     html =  """                                                                                                                                           
 <div id='mitte_unten'>                                                                                                                                    
     <p style="margin-left:15px;">                                                                                                                         
@@ -107,11 +137,26 @@ if action == 'dogs':
     s = Template(html).safe_substitute(headline = headline)
     print s
 
+    for dog in dogs:
+        sql = "SELECT run.run_type, run.time, run.class, track.distance, track.alt_diff FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN track ON run.track_id = track.id WHERE dog_id = %s;"%dog[7] 
+        cur.execute(sql)
+        dog_det = cur.fetchall()
+        av_speed = dict()
+        for det in dog_det:
+            if not det[0] in av_speed:
+                av_speed[det[0]] = list()
+            av_speed[det[0]].append(str(det[3]) + ";" + str(get_av_speed(det[3], det[1])))
+
+        
+        print "<div id='div_%s' style='display:none;'> "%(dog[7])
+        print "<span class='hToggle' onclick='ToggleBox(\"div_%s\")'><h2>Statistik <small>%s</small></h2></span>"%(dog[7], dog[0])
+        print av_speed
+        print "</div>"
 
     print "<table><tr><th>Name</th><th>Datum der Geburt</th><th>Besitzer</th><th>Z&uuml;chter</th><th>Vater</th><th>Mutter</th><th>Zuchtname</th></tr>"
     for dog in dogs:
-        html = "<tr><td>$Name</td><td>$DoB</td><td>$Own</td><td>$Grow</td><td>$Fat</td><td>$Mot</td><td>$Grow_N</td></tr>"
-        s = Template(html).safe_substitute(Name = dog[0], DoB = str(dog[1]).split(" ")[0], Own = dog[4], Grow = dog[5], Fat = dog[2], Mot = dog [3], Grow_N = dog[6])
+        html = "<tr><td><span onclick='ToggleBox(\"$div\")'>$Name</span></td><td>$DoB</td><td>$Own</td><td>$Grow</td><td>$Fat</td><td>$Mot</td><td>$Grow_N</td></tr>"
+        s = Template(html).safe_substitute(div = "div_%s"%dog[7], Name = dog[0], DoB = str(dog[1]).split(" ")[0], Own = dog[4], Grow = dog[5], Fat = dog[2], Mot = dog [3], Grow_N = dog[6])
         print s
 
     
