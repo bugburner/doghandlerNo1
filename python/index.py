@@ -8,9 +8,9 @@ from string import Template
 
 import pre
 from mysqlopts import give_mysql_opts
-from run_props import get_av_speed
+from run_props import get_av_speed, get_2d_plot
 
-from parsegpx import parse_gpx
+from parsegpx import parse_gpx, get_det_speed, mean
 
 mysql_opts = give_mysql_opts()
 mysql = MySQLdb.connect(mysql_opts['host'], mysql_opts['user'], mysql_opts['pass'], mysql_opts['db'])
@@ -137,20 +137,112 @@ if action == 'dogs':
     s = Template(html).safe_substitute(headline = headline)
     print s
 
+
     for dog in dogs:
-        sql = "SELECT run.run_type, run.time, run.class, track.distance, track.alt_diff FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN track ON run.track_id = track.id WHERE dog_id = %s;"%dog[7] 
+        speed_vs_distance = dict()
+        distance_l = list()
+    
+        gpx_file = list()
+        sql = "SELECT run.run_type, run.time, run.class, track.distance, track.alt_diff, run.gpx_file FROM run_dogs INNER JOIN run ON run_id = run.id INNER JOIN track ON run.track_id = track.id WHERE dog_id = %s;"%dog[7] 
         cur.execute(sql)
         dog_det = cur.fetchall()
         av_speed = dict()
         for det in dog_det:
             if not det[0] in av_speed:
                 av_speed[det[0]] = list()
+            if not det[5] == None and not det[5] == '':
+                gpx_file.append(det[5])
+            else:
+                distance_l.append(det[3])
+                if not det[3] in speed_vs_distance:
+                    speed_vs_distance[det[3]]=get_av_speed(det[3], det[1])
+                else:
+                    speed_vs_distance[det[3]]=mean([speed_vs_distance[det[3]],get_av_speed(det[3], det[1])])
+
             av_speed[det[0]].append(str(det[3]) + ";" + str(get_av_speed(det[3], det[1])))
 
         
         print "<div id='div_%s' style='display:none;'> "%(dog[7])
         print "<span class='hToggle' onclick='ToggleBox(\"div_%s\")'><h2>Statistik <small>%s</small></h2></span>"%(dog[7], dog[0])
-        print av_speed
+
+        speed_up_l =list ()
+        speed_down_l = list()
+        speed_eq_l =list()
+        speed_av_l = list()
+        pitch_l = list()
+        speed_l = list()
+        gpx = 0
+        for gpxf in gpx_file:
+            if not gpxf == '':
+                gpx = 1
+                speed_up, speed_down, speed_eq,speed_av, distance,speed, pitch = get_det_speed(gpxf)
+                speed_up_l.append(speed_up)
+                speed_down_l.append(speed_down)
+                speed_eq_l.append(speed_eq)
+                if distance in speed_vs_distance:
+                    speed_vs_distance[distance] = mean([speed_vs_distance[distance],speed_av])
+                else:
+                    speed_vs_distance[distance] = speed_av
+                distance_l.append(distance)
+                for s in speed:
+                    speed_l.append(s)
+                for s in pitch:
+                    pitch_l.append(round((s*100),1))
+        
+        print pitch_l 
+        speed_vs_pitch = dict()
+        for i in range(0,len(pitch_l)):
+            if not round(pitch_l[i],1) in speed_vs_pitch:
+                speed_vs_pitch[round(pitch_l[i],1)] = speed_l[i]
+            else:
+                speed_vs_pitch[round(pitch_l[i],1)] = mean([speed_vs_pitch[round(pitch_l[i],1)],speed_l[i]])
+
+
+
+        x = list()
+        y = list()
+        steps = 1
+
+        distance_l = sorted(list(set(distance_l)))
+        speed_l = list()
+
+        for d in distance_l:
+            speed_l.append(speed_vs_distance[d])
+
+        
+                    
+        print "Durchschnittsgeschwindigkeiten:<br><table>"        
+        print "<tr><td>Geschwindigkeit Mittel</td> <td>%s</td></tr>"%str(round(mean(speed_l),2))
+        print "<tr><td>Geschwindigkeit Bergauf</td><td> %s </td></tr> "%str(round(mean(speed_up_l),2))
+        print "<tr><td>Geschwindigkeit Bergab</td><td> %s </td></tr>"%str(round(mean(speed_down_l),2))
+        print "<tr><td>Geschwindigkeit Gerade</td><td> %s </td></tr>"%str(round(mean(speed_eq_l),2))
+        
+        print "</table><br>Geschwindigkeit vs. Distanz:<br>"
+        svg = get_2d_plot(distance_l,speed_l,"","km","km/h")
+        print svg
+
+        pitch_l = sorted(list(set(pitch_l)))
+        
+        speed_l = list()
+
+        x = list()
+        y = list()
+        steps = 5
+
+        for p in pitch_l:
+            speed_l.append(speed_vs_pitch[p])
+
+        for i in range(0,len(pitch_l),steps):
+            if i < len(pitch_l)-steps + 1:
+                x.append(mean([pitch_l[i],pitch_l[i+1],pitch_l[i+2]]))
+                y.append(mean([speed_l[i],speed_l[i+1],speed_l[i+2]]))
+
+
+        print "<br>Geschwindigkeit vs. Steigung:<br>"
+        svg = get_2d_plot(x,y,"","%","km/h")
+        #svg = get_2d_plot(pitch_l,speed_l,"","%","km/h")
+        print svg
+
         print "</div>"
 
     print "<table><tr><th>Name</th><th>Datum der Geburt</th><th>Besitzer</th><th>Z&uuml;chter</th><th>Vater</th><th>Mutter</th><th>Zuchtname</th></tr>"

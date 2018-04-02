@@ -2,7 +2,7 @@ import MySQLdb
 
 def give_mysql_opts(): 
     mysql_opts = {
-        'host': "localhost",
+        'host': "10.8.0.1",
         'user': "doghandler",
         'pass': "doghandler_blarg0815",
         'db':   "doghandlerNo1"
