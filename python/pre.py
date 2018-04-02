@@ -12,9 +12,9 @@ print """
 <!--a:hover { font-weight:bold; background-color:#eeeeee; text-decoration:none; }-->
 <!--a:active { font-weight:bold; color:lime; text-decoration:underline; }-->
 </style>
-<script src="js/page.js"   type="text/javascript"></script>
-<script src="js/menu.js"   type="text/javascript"></script>
-<script src="js/overlib.js"   type="text/javascript"></script>
+<script src="../js/page.js"   type="text/javascript"></script>
+<script src="../js/menu.js"   type="text/javascript"></script>
+<script src="../js/overlib.js"   type="text/javascript"></script>
 </head>
 <body>
 
