@@ -24,10 +24,10 @@ def get_2d_plot (x,y,title,xdim,ydim):
 set terminal svg enhanced dashed;
 set output;"""
     gnuplot_header = gnuplot_header + "set xlabel 'x [%s]';"%xdim
-    gnuplot_header = gnuplot_header + "set ylabel 'x [%s]';"%ydim
+    gnuplot_header = gnuplot_header + "set ylabel 'y [%s]';"%ydim
 
     gnuplot_header = gnuplot_header +"""
-set ytics axis;
+
 
 
 set style line 1 lc rgb '#0060ad' lw 2 lt -1 pt 4 pi -1;

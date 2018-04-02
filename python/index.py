@@ -5,6 +5,7 @@ import cgi
 import cgitb
 import MySQLdb
 from string import Template
+from scipy.signal import wiener
 
 import pre
 from mysqlopts import give_mysql_opts
@@ -189,7 +190,6 @@ if action == 'dogs':
                 for s in pitch:
                     pitch_l.append(round((s*100),1))
         
-        print pitch_l 
         speed_vs_pitch = dict()
         for i in range(0,len(pitch_l)):
             if not round(pitch_l[i],1) in speed_vs_pitch:
@@ -209,7 +209,6 @@ if action == 'dogs':
         for d in distance_l:
             speed_l.append(speed_vs_distance[d])
 
-        
                     
         print "Durchschnittsgeschwindigkeiten:<br><table>"        
         print "<tr><td>Geschwindigkeit Mittel</td> <td>%s</td></tr>"%str(round(mean(speed_l),2))
@@ -227,15 +226,14 @@ if action == 'dogs':
 
         x = list()
         y = list()
-        steps = 5
 
         for p in pitch_l:
             speed_l.append(speed_vs_pitch[p])
-
-        for i in range(0,len(pitch_l),steps):
-            if i < len(pitch_l)-steps + 1:
-                x.append(mean([pitch_l[i],pitch_l[i+1],pitch_l[i+2]]))
-                y.append(mean([speed_l[i],speed_l[i+1],speed_l[i+2]]))
+ 
+        for i in range(0,len(pitch_l)):
+            if i < len(pitch_l):
+                x.append(pitch_l[i])
+                y.append(speed_l[i])
 
 
         print "<br>Geschwindigkeit vs. Steigung:<br>"
