@@ -7,6 +7,13 @@ import os
 # Parsing an existing file:
 # -------------------------
 
+def mean(l):
+    if len(l)>0:
+        av_l = sum(l) / float(len(l))
+    else:
+        av_l = sum(l)
+    return av_l
+
 def get_plot(indz, elev, speed,av_speed):
     import time
     ts = time.time()
@@ -186,3 +193,42 @@ def parse_gpx(path):
     map2d = get_map_2d(lat,lon, speed)
     return distance, svg, map3d, map2d
 
+def get_det_speed(path):
+    gpx_file = open(path, 'r')
+
+    gpx = gpxpy.parse(gpx_file)
+
+    speed_up_l = list()
+    speed_down_l = list()
+    speed_eq_l = list()
+    pitch_l = list()
+    speed_l = list()
+    old_elev = 0.0
+    distance = 0.0
+    av_speed = 0.0
+
+    for track in gpx.tracks:
+        for segment in track.segments:
+            for point in segment.points:
+                if not old_elev == 0:
+                    if abs((point.elevation - old_point.elevation) / gpxpy.geo.distance(old_point.latitude, old_point.longitude, old_point.elevation, point.latitude, point.longitude, point.elevation)) < 0.07:
+                        speed_eq_l.append(point.speed_between(old_point)*3.6)
+                    else:
+                        if point.elevation - old_point.elevation < 0:
+                            speed_down_l.append(point.speed_between(old_point)*3.6)
+                        else:
+                            speed_up_l.append(point.speed_between(old_point)*3.6)
+                    pitch_l.append ((point.elevation - old_point.elevation) / gpxpy.geo.distance(old_point.latitude, old_point.longitude, old_point.elevation, point.latitude, point.longitude, point.elevation))
+                    speed_l.append(point.speed_between(old_point)*3.6)
+                old_elev = point.elevation
+                old_point = point
+            distance = segment.length_3d()/1000.0
+            s_min_km = (segment.get_duration() / 60.0) / (segment.length_3d() / 1000)
+            av_speed = 1.0 / s_min_km * 60.0
+
+    speed_up = mean (speed_up_l)
+    speed_down = mean (speed_down_l)
+    speed_eq = mean (speed_eq_l)
+    #return 0.0,0.0,0.0
+    return speed_up, speed_down, speed_eq, av_speed, distance, speed_l, pitch_l
+                
